@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Einfaches Soundboard</title>
+  <link rel="manifest" href="manifest.json"> <!-- für Progressive Web App -->
+
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #121212;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    /* Grid-Layout für die Sound-Buttons */
+    .sound-board {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 15px;
+      max-width: 500px;
+      margin: 20px auto;
+    }
+
+    /* Button-Styling */
+    .sound-btn {
+      background-color: #1e1e2e;
+      color: white;
+      border: 2px solid #313244;
+      border-radius: 12px;
+      padding: 20px 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.1s;
+    }
+
+    .sound-btn:active {
+      transform: scale(0.95);
+      background-color: #45475a;
+    }
+
+    .emoji {
+      font-size: 2.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔊 Mein Soundboard</h1>
+
+  <!-- Container für die dynamischen Buttons -->
+  <div class="sound-board" id="soundBoard"></div>
+
+  <script>
+    // *** Sound Buttons und Funktion aus Array erstellen ***
+
+    // 1. Liste der Sounds mit MP3-Links
+    const sounds = [
+      // { name: 'Applaus', emoji: '👏', file: 'xxx' },
+      { name: 'Ich bin der Dude!', emoji: '😂', file: 'media/i-am-the-dude.mp3' },
+      { name: 'Gong', emoji: '🔔', file: 'https://cdn.freesound.org/previews/339/339812_5121236-lq.mp3' },
+      /*{ name: 'Trommel', emoji: '🥁', file: 'xxx' },
+      { name: 'Pop', emoji: '🎈', file: 'xxx' },
+      { name: 'Siren', emoji: '🚨', file: 'x' }
+       */
+    ];
+
+    const board = document.getElementById('soundBoard');
+
+    // 2. Für jeden Sound im Array einen Button erstellen
+    sounds.forEach(sound => {
+      const button = document.createElement('button');
+      button.className = 'sound-btn';
+      button.innerHTML = `<span class="emoji">${sound.emoji}</span><span>${sound.name}</span>`;
+
+      // 3. Beim Klick den Sound abspielen
+      button.addEventListener('click', () => {
+        const audio = new Audio(sound.file);
+        audio.play();
+      });
+
+      board.appendChild(button);
+    });
+
+
+    // *** für PWA: Service Worker Registrierung ***
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker erfolgreich registriert!', reg))
+          .catch(err => console.error('Service Worker Fehler:', err));
+      });
+    }
+
+
+  </script>
+
+</body>
+</html>
