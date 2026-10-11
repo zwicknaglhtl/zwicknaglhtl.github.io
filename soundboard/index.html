@@ -84,10 +84,20 @@
       button.className = 'sound-btn';
       button.innerHTML = `<span class="emoji">${sound.emoji}</span><span>${sound.name}</span>`;
 
-      // 3. Beim Klick den Sound abspielen
+      let audio = null;
+
+      // 3. Beim Klick den Sound abspielen bzw. stoppen falls er bereits läuft
       button.addEventListener('click', () => {
-        const audio = new Audio(sound.file);
-        audio.play();
+        if (audio && !audio.paused) {
+          audio.pause();
+          audio.currentTime = 0;
+        } else {
+          if (!audio) {
+            audio = new Audio(sound.file);
+          }
+          audio.currentTime = 0;
+          audio.play().catch(() => {});
+        }
       });
 
       board.appendChild(button);
